@@ -1,0 +1,174 @@
+
+state 0
+	$accept: .program $end 
+
+	INTEGER  shift 5
+	STRING  shift 6
+	DOT  shift 8
+	SELECT  shift 7
+	.  error
+
+	program  goto 1
+	literal  goto 2
+	source  goto 3
+	filter  goto 4
+
+state 1
+	$accept:  program.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	program:  literal.    (1)
+
+	.  reduce 1 (src line 31)
+
+
+state 3
+	program:  source.    (2)
+
+	.  reduce 2 (src line 33)
+
+
+state 4
+	program:  filter.    (3)
+	filter:  filter.',' filter 
+	filter:  filter.'|' filter 
+
+	'|'  shift 10
+	','  shift 9
+	.  reduce 3 (src line 34)
+
+
+state 5
+	literal:  INTEGER.    (4)
+
+	.  reduce 4 (src line 40)
+
+
+state 6
+	literal:  STRING.    (5)
+
+	.  reduce 5 (src line 45)
+
+
+state 7
+	source:  SELECT.IDENT 
+
+	IDENT  shift 11
+	.  error
+
+
+state 8
+	filter:  DOT.    (7)
+	filter:  DOT.IDENT 
+	filter:  DOT.BRACKET_L INTEGER BRACKET_R 
+	filter:  DOT.IDENT BRACKET_L INTEGER BRACKET_R 
+
+	BRACKET_L  shift 13
+	IDENT  shift 12
+	.  reduce 7 (src line 56)
+
+
+state 9
+	filter:  filter ','.filter 
+
+	DOT  shift 8
+	.  error
+
+	filter  goto 14
+
+state 10
+	filter:  filter '|'.filter 
+
+	DOT  shift 8
+	.  error
+
+	filter  goto 15
+
+state 11
+	source:  SELECT IDENT.    (6)
+
+	.  reduce 6 (src line 50)
+
+
+state 12
+	filter:  DOT IDENT.    (8)
+	filter:  DOT IDENT.BRACKET_L INTEGER BRACKET_R 
+
+	BRACKET_L  shift 16
+	.  reduce 8 (src line 61)
+
+
+state 13
+	filter:  DOT BRACKET_L.INTEGER BRACKET_R 
+
+	INTEGER  shift 17
+	.  error
+
+
+state 14
+	filter:  filter.',' filter 
+	filter:  filter ',' filter.    (11)
+	filter:  filter.'|' filter 
+
+	.  reduce 11 (src line 73)
+
+
+state 15
+	filter:  filter.',' filter 
+	filter:  filter.'|' filter 
+	filter:  filter '|' filter.    (12)
+
+	'|'  shift 10
+	','  shift 9
+	.  reduce 12 (src line 83)
+
+
+state 16
+	filter:  DOT IDENT BRACKET_L.INTEGER BRACKET_R 
+
+	INTEGER  shift 18
+	.  error
+
+
+state 17
+	filter:  DOT BRACKET_L INTEGER.BRACKET_R 
+
+	BRACKET_R  shift 19
+	.  error
+
+
+state 18
+	filter:  DOT IDENT BRACKET_L INTEGER.BRACKET_R 
+
+	BRACKET_R  shift 20
+	.  error
+
+
+state 19
+	filter:  DOT BRACKET_L INTEGER BRACKET_R.    (9)
+
+	.  reduce 9 (src line 65)
+
+
+state 20
+	filter:  DOT IDENT BRACKET_L INTEGER BRACKET_R.    (10)
+
+	.  reduce 10 (src line 69)
+
+
+12 terminals, 5 nonterminals
+13 grammar rules, 21/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+54 working sets used
+memory: parser 5/30000
+0 extra closures
+18 shift entries, 1 exceptions
+6 goto entries
+0 entries saved by goto default
+Optimizer space used: output 21/30000
+21 table entries, 0 zero
+maximum spread: 12, maximum offset: 11
